@@ -1,6 +1,6 @@
 {
-    "name": "jenawant/smpp",
-    "description": "MSProGateWay is a lightweight, ultra-high-performance SMS gateway written based on PHP + Swoole + Hyperf. It supports the SMPP V3.4 protocol and is used to build an SMS service platform based on the SMPP protocol. It can also be used as a client.",
+    "name": "khiemdd/smpp",
+    "description": "php smpp",
     "type": "library",
     "license": "Apache-2.0",
     "keywords": [
@@ -16,8 +16,8 @@
     },
     "authors": [
         {
-            "name": "Jena",
-            "email": "jena.want@qq.com"
+            "name": "khiemdd",
+            "email": "khiemdd"
         }
     ],
     "minimum-stability": "stable",
