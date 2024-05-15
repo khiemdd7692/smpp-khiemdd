@@ -1,8 +1,8 @@
 <?php
 
-namespace SMPP3\Trait;
+namespace SMPP\Trait;
 
-use SMPP3\SMPP3Protocol;
+use SMPP\SMPPProtocol;
 
 /**
  *
@@ -15,6 +15,6 @@ trait ReceiverTrait
      */
     public function handleDeliverSm($sequenceNumber)
     {
-        $this->send(SMPP3Protocol::packDeliverSmResp($sequenceNumber));
+        $this->send(SMPPProtocol::packDeliverSmResp($sequenceNumber));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace SMPP3\Util;
+namespace SMPP\Util;
 
 /**
  *

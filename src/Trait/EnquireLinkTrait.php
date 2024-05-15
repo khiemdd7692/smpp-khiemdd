@@ -1,9 +1,9 @@
 <?php
 
-namespace SMPP3\Trait;
+namespace SMPP\Trait;
 
 use Swoole\Coroutine;
-use SMPP3\SMPP3Protocol;
+use SMPP\SMPPProtocol;
 
 trait EnquireLinkTrait
 {
@@ -37,7 +37,7 @@ trait EnquireLinkTrait
 
 
             //发送探活
-            $this->send(SMPP3Protocol::packEnquireLink());
+            $this->send(SMPPProtocol::packEnquireLink());
 
             if (++$this->waitEnquireLinkResp > $this->smpp->getConfig('active_test_num')) {
                 //如果探活未回应次数大于配置则断开链接发送unbind
@@ -63,7 +63,7 @@ trait EnquireLinkTrait
     public function handleEnquireLink($sequenceNumber)
     {
         //发送响应
-        $this->send(SMPP3Protocol::packEnquireLinkResp($sequenceNumber));
+        $this->send(SMPPProtocol::packEnquireLinkResp($sequenceNumber));
     }
 
     /**

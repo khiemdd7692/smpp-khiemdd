@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SMPP3;
+namespace SMPP;
 
 class ConfigProvider
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace SMPP3\Abstract;
+namespace SMPP\Abstract;
 
-use SMPP3\SMPP3Protocol;
+use SMPP\SMPPProtocol;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Client;
 use Swoole\Coroutine\Channel;
-use SMPP3\Trait\EnquireLinkTrait;
+use SMPP\Trait\EnquireLinkTrait;
 abstract class BaseTrans
 {
     use EnquireLinkTrait;
@@ -202,7 +202,7 @@ abstract class BaseTrans
             return self::doHook($fail) ?? false;
         }
 
-        if ($responseArr['command_status'] !== SMPP3Protocol::ESME_ROK) {
+        if ($responseArr['command_status'] !== SMPPProtocol::ESME_ROK) {
             //如果链接失败，则关闭tcp链接
             $this->client->close();
 
@@ -246,7 +246,7 @@ abstract class BaseTrans
     public function unbind()
     {
         if ($this->client->errCode !== 8 && $this->client->errCode !== 110) {
-            $pdu = SMPP3Protocol::packUnbind();
+            $pdu = SMPPProtocol::packUnbind();
 
             $this->send([$pdu]);
         }
@@ -258,7 +258,7 @@ abstract class BaseTrans
      */
     public function handleUnbind($sequenceNumber)
     {
-        $this->send([SMPP3Protocol::packUnbindResp($sequenceNumber)]);
+        $this->send([SMPPProtocol::packUnbindResp($sequenceNumber)]);
     }
 
     /**

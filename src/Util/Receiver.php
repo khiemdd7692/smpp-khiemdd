@@ -1,10 +1,10 @@
 <?php
 
-namespace SMPP3\Util;
+namespace SMPP\Util;
 
-use SMPP3\Abstract\BaseTrans;
-use SMPP3\SMPP3Protocol;
-use SMPP3\Trait\ReceiverTrait;
+use SMPP\Abstract\BaseTrans;
+use SMPP\SMPPProtocol;
+use SMPP\Trait\ReceiverTrait;
 
 /**
  *
@@ -21,7 +21,7 @@ class Receiver extends BaseTrans
      */
     public function getBindPdu($account, $pwd)
     {
-        return SMPP3Protocol::packBindReceiver(
+        return SMPPProtocol::packBindReceiver(
             $account,
             $pwd,
             $this->smpp->getConfig('system_type'),
@@ -39,13 +39,13 @@ class Receiver extends BaseTrans
      */
     public function unpackBindResp($pdu)
     {
-        $headerArr = SMPP3Protocol::unpackHeader(substr($pdu, 0, 16));
+        $headerArr = SMPPProtocol::unpackHeader(substr($pdu, 0, 16));
 
-        if ($headerArr['command_id'] !== SMPP3Protocol::BIND_RECEIVER_RESP) {
+        if ($headerArr['command_id'] !== SMPPProtocol::BIND_RECEIVER_RESP) {
             return false;
         }
 
-        $bodyArr = SMPP3Protocol::unpackBindResp(substr($pdu, 16));
+        $bodyArr = SMPPProtocol::unpackBindResp(substr($pdu, 16));
 
         return array_merge($headerArr, $bodyArr);
     }
@@ -57,14 +57,14 @@ class Receiver extends BaseTrans
      */
     public function handlePdu($pdu)
     {
-        $headerArr = SMPP3Protocol::unpackHeader(substr($pdu, 0, 16));
+        $headerArr = SMPPProtocol::unpackHeader(substr($pdu, 0, 16));
 
         $this->resetSmscEnquireLikTime();
 
         //只返回submit_resp和deliver 其他的接收处理后跳过
         switch ($headerArr['command_id']) {
-            case SMPP3Protocol::DELIVER_SM:
-                $data = SMPP3Protocol::unpackDeliverSm(substr($pdu, 16));
+            case SMPPProtocol::DELIVER_SM:
+                $data = SMPPProtocol::unpackDeliverSm(substr($pdu, 16));
 
                 if (empty($data)) {
                     break;
@@ -73,15 +73,15 @@ class Receiver extends BaseTrans
                 $this->handleDeliverSm($headerArr['sequence_number']);
 
                 return array_merge($headerArr, $data);
-            case SMPP3Protocol::ENQUIRE_LINK:
+            case SMPPProtocol::ENQUIRE_LINK:
                 $this->handleEnquireLink($headerArr['sequence_number']);
 
                 break;
-            case SMPP3Protocol::ENQUIRE_LINK_RESP:
+            case SMPPProtocol::ENQUIRE_LINK_RESP:
                 $this->handleEnquireLinkResp();
 
                 break;
-            case SMPP3Protocol::UNBIND:
+            case SMPPProtocol::UNBIND:
                 $this->handleUnbind($headerArr['sequence_number']);
 
                 break;

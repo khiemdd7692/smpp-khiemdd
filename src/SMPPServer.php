@@ -1,26 +1,26 @@
 <?php
 
-namespace SMPP3;
+namespace SMPP;
 
-class SMPP3Server
+class SMPPServer
 {
     public $allowCommands = [
-        SMPP3Protocol::GENERIC_NACK,
-        SMPP3Protocol::BIND_RECEIVER,
-        SMPP3Protocol::BIND_TRANSMITTER,
-        SMPP3Protocol::BIND_TRANSCEIVER,
-        SMPP3Protocol::UNBIND,
-        SMPP3Protocol::UNBIND_RESP,
-        SMPP3Protocol::SUBMIT_SM,
-        SMPP3Protocol::DELIVER_SM_RESP,
-        SMPP3Protocol::ENQUIRE_LINK,
-        SMPP3Protocol::ENQUIRE_LINK_RESP,
+        SMPPProtocol::GENERIC_NACK,
+        SMPPProtocol::BIND_RECEIVER,
+        SMPPProtocol::BIND_TRANSMITTER,
+        SMPPProtocol::BIND_TRANSCEIVER,
+        SMPPProtocol::UNBIND,
+        SMPPProtocol::UNBIND_RESP,
+        SMPPProtocol::SUBMIT_SM,
+        SMPPProtocol::DELIVER_SM_RESP,
+        SMPPProtocol::ENQUIRE_LINK,
+        SMPPProtocol::ENQUIRE_LINK_RESP,
     ];
     public $notHandleCommands = [
-        SMPP3Protocol::GENERIC_NACK,
-        SMPP3Protocol::DELIVER_SM_RESP,
-        SMPP3Protocol::UNBIND_RESP,
-        SMPP3Protocol::ENQUIRE_LINK_RESP,
+        SMPPProtocol::GENERIC_NACK,
+        SMPPProtocol::DELIVER_SM_RESP,
+        SMPPProtocol::UNBIND_RESP,
+        SMPPProtocol::ENQUIRE_LINK_RESP,
     ];
     public $needCloseFd = false;//是否需要关闭连接
     public $response;           //协议响应
@@ -94,7 +94,7 @@ class SMPP3Server
      */
     public function parseHeader(): bool
     {
-        $this->headerArr = @unpack(SMPP3Protocol::$headerUnpackRule, $this->headerBinary);
+        $this->headerArr = @unpack(SMPPProtocol::$headerUnpackRule, $this->headerBinary);
 
         $this->commandId = $this->headerArr['command_id'] ?? null;
 
@@ -102,7 +102,7 @@ class SMPP3Server
             return false;
         }
 
-        if ($this->headerArr['command_status'] !== SMPP3Protocol::ESME_ROK) {
+        if ($this->headerArr['command_status'] !== SMPPProtocol::ESME_ROK) {
             return false;
         }
 
@@ -152,23 +152,23 @@ class SMPP3Server
         $seqNumber = $this->getHeader('sequence_number');
 
         switch ($this->commandId) {
-            case SMPP3Protocol::BIND_RECEIVER:
-                $this->response = SMPP3Protocol::packBindReceiverResp($errCode, $seqNumber);
+            case SMPPProtocol::BIND_RECEIVER:
+                $this->response = SMPPProtocol::packBindReceiverResp($errCode, $seqNumber);
                 break;
-            case SMPP3Protocol::BIND_TRANSMITTER:
-                $this->response = SMPP3Protocol::packBindTransmitterResp($errCode, $seqNumber);
+            case SMPPProtocol::BIND_TRANSMITTER:
+                $this->response = SMPPProtocol::packBindTransmitterResp($errCode, $seqNumber);
                 break;
-            case SMPP3Protocol::BIND_TRANSCEIVER:
-                $this->response = SMPP3Protocol::packBindTransceiverResp($errCode, $seqNumber);
+            case SMPPProtocol::BIND_TRANSCEIVER:
+                $this->response = SMPPProtocol::packBindTransceiverResp($errCode, $seqNumber);
                 break;
-            case SMPP3Protocol::UNBIND:
-                $this->response = SMPP3Protocol::packUnbindResp($errCode, $seqNumber);
+            case SMPPProtocol::UNBIND:
+                $this->response = SMPPProtocol::packUnbindResp($errCode, $seqNumber);
                 break;
-            case SMPP3Protocol::SUBMIT_SM:
-                $this->response = SMPP3Protocol::packSubmitSmResp($errCode, $seqNumber);
+            case SMPPProtocol::SUBMIT_SM:
+                $this->response = SMPPProtocol::packSubmitSmResp($errCode, $seqNumber);
                 break;
-            case SMPP3Protocol::ENQUIRE_LINK:
-                $this->response = SMPP3Protocol::packEnquireLinkResp($seqNumber);
+            case SMPPProtocol::ENQUIRE_LINK:
+                $this->response = SMPPProtocol::packEnquireLinkResp($seqNumber);
                 break;
         }
     }
@@ -180,18 +180,18 @@ class SMPP3Server
     public function parseBody(): bool
     {
         //拆除连接和客户端探活操作无协议体
-        if ($this->commandId === SMPP3Protocol::UNBIND || $this->commandId === SMPP3Protocol::ENQUIRE_LINK) {
+        if ($this->commandId === SMPPProtocol::UNBIND || $this->commandId === SMPPProtocol::ENQUIRE_LINK) {
             return true;
         }
 
         switch ($this->commandId) {
-            case SMPP3Protocol::BIND_RECEIVER:
-            case SMPP3Protocol::BIND_TRANSMITTER:
-            case SMPP3Protocol::BIND_TRANSCEIVER:
-                $this->bodyArr = SMPP3Protocol::unpackBind($this->bodyBinary);
+            case SMPPProtocol::BIND_RECEIVER:
+            case SMPPProtocol::BIND_TRANSMITTER:
+            case SMPPProtocol::BIND_TRANSCEIVER:
+                $this->bodyArr = SMPPProtocol::unpackBind($this->bodyBinary);
                 break;
-            case SMPP3Protocol::SUBMIT_SM:
-                $this->bodyArr = SMPP3Protocol::unpackSubmitSm($this->bodyBinary);
+            case SMPPProtocol::SUBMIT_SM:
+                $this->bodyArr = SMPPProtocol::unpackSubmitSm($this->bodyBinary);
                 break;
         }
 
@@ -206,18 +206,18 @@ class SMPP3Server
     public function handle(): bool
     {
         switch ($this->commandId) {
-            case SMPP3Protocol::BIND_RECEIVER:
-            case SMPP3Protocol::BIND_TRANSMITTER:
-            case SMPP3Protocol::BIND_TRANSCEIVER:
+            case SMPPProtocol::BIND_RECEIVER:
+            case SMPPProtocol::BIND_TRANSMITTER:
+            case SMPPProtocol::BIND_TRANSCEIVER:
                 //客户端提交的连接请求
                 return $this->handleConnect();
-            case SMPP3Protocol::SUBMIT_SM:
+            case SMPPProtocol::SUBMIT_SM:
                 //客户端提交的发送连接请求
                 return $this->handleSubmit();
-            case SMPP3Protocol::UNBIND:
+            case SMPPProtocol::UNBIND:
                 //客户端提交的断开连接请求
                 return $this->handleUnbind();
-            case SMPP3Protocol::ENQUIRE_LINK:
+            case SMPPProtocol::ENQUIRE_LINK:
                 //客户段提交的探活请求
                 return $this->handleEnquireLink();
         }
@@ -243,18 +243,18 @@ class SMPP3Server
     public function packageConnectResp()
     {
         switch ($this->getCommandId()) {
-            case SMPP3Protocol::BIND_RECEIVER:
-                $commandId = SMPP3Protocol::BIND_RECEIVER_RESP;
+            case SMPPProtocol::BIND_RECEIVER:
+                $commandId = SMPPProtocol::BIND_RECEIVER_RESP;
                 break;
-            case SMPP3Protocol::BIND_TRANSMITTER:
-                $commandId = SMPP3Protocol::BIND_TRANSMITTER_RESP;
+            case SMPPProtocol::BIND_TRANSMITTER:
+                $commandId = SMPPProtocol::BIND_TRANSMITTER_RESP;
                 break;
             default:
-                $commandId = SMPP3Protocol::BIND_TRANSCEIVER_RESP;
+                $commandId = SMPPProtocol::BIND_TRANSCEIVER_RESP;
                 break;
         }
 
-        $this->response = SMPP3Protocol::packBindResp($commandId, null, $this->getHeader('sequence_number'), $this->getBody('system_id'));
+        $this->response = SMPPProtocol::packBindResp($commandId, null, $this->getHeader('sequence_number'), $this->getBody('system_id'));
     }
 
     /**
@@ -297,7 +297,7 @@ class SMPP3Server
 
         $this->msgHexId = implode('', $hexArr);
 
-        $this->response = SMPP3Protocol::packSubmitSmResp(null, $this->getHeader('sequence_number'), $this->msgHexId);
+        $this->response = SMPPProtocol::packSubmitSmResp(null, $this->getHeader('sequence_number'), $this->msgHexId);
 
         return true;
     }
@@ -308,7 +308,7 @@ class SMPP3Server
      */
     public function handleUnbind(): bool
     {
-        $this->response = SMPP3Protocol::packUnbindResp($this->getHeader('sequence_number'));
+        $this->response = SMPPProtocol::packUnbindResp($this->getHeader('sequence_number'));
 
         return true;
     }
@@ -319,7 +319,7 @@ class SMPP3Server
      */
     public function handleEnquireLink(): bool
     {
-        $this->response = SMPP3Protocol::packEnquireLinkResp($this->getHeader('sequence_number'));
+        $this->response = SMPPProtocol::packEnquireLinkResp($this->getHeader('sequence_number'));
 
         return true;
     }
@@ -330,8 +330,8 @@ class SMPP3Server
      */
     public function getRespCommand(): int
     {
-        if ($this->commandId === SMPP3Protocol::SUBMIT_SM) {
-            return SMPP3Protocol::SUBMIT_SM_RESP;
+        if ($this->commandId === SMPPProtocol::SUBMIT_SM) {
+            return SMPPProtocol::SUBMIT_SM_RESP;
         }
 
         return 0;

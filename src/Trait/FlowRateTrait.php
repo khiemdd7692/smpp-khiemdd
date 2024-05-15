@@ -1,6 +1,6 @@
 <?php
 
-namespace SMPP3\Trait;
+namespace SMPP\Trait;
 
 use Swoole\Coroutine;
 trait FlowRateTrait

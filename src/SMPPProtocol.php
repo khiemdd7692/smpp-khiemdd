@@ -1,11 +1,11 @@
 <?php
-namespace SMPP3;
+namespace SMPP;
 /**
  * SMPP3协议
  * @author JENA
  * @since 20240418
  */
-class SMPP3Protocol
+class SMPPProtocol
 {
     //操作
     const GENERIC_NACK = 0x00000000;

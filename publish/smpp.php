@@ -2,8 +2,7 @@
 declare(strict_types=1);
 
 /**
- * SMPP3 Server Config
- * @author Jena
+ * SMPP Server Config
  */
 
 use Hyperf\Server\Server;

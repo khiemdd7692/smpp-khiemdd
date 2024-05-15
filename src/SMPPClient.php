@@ -1,14 +1,14 @@
 <?php
 
-namespace SMPP3;
+namespace SMPP;
 
 use Closure;
 use Swoole\Coroutine;
-use SMPP3\Util\Receiver;
-use SMPP3\Util\Transceiver;
-use SMPP3\Util\Transmitter;
+use SMPP\Util\Receiver;
+use SMPP\Util\Transceiver;
+use SMPP\Util\Transmitter;
 
-class SMPP3Client
+class SMPPClient
 {
     /** @var Transceiver */
     protected $transceiver;
@@ -123,13 +123,13 @@ class SMPP3Client
         $this->startBindTime = time();
 
         if (strlen($account) > 15) {
-            $this->syncClientErr(SMPP3Protocol::ESME_RINVSYSID, 'Invalid System ID');
+            $this->syncClientErr(SMPPProtocol::ESME_RINVSYSID, 'Invalid System ID');
 
             return false;
         }
 
         if (strlen($pwd) > 8) {
-            $this->syncClientErr(SMPP3Protocol::ESME_RINVPASWD, 'Invalid Password');
+            $this->syncClientErr(SMPPProtocol::ESME_RINVPASWD, 'Invalid Password');
 
             return false;
         }

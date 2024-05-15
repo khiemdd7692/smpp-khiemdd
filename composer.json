@@ -11,13 +11,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "SMPP3\\": "src/"
+            "SMPP\\": "src/"
         }
     },
     "authors": [
         {
             "name": "khiemdd",
-            "email": "khiemdd"
+            "email": "khiemdd7692@gmail.com"
         }
     ],
     "minimum-stability": "stable",
@@ -31,7 +31,7 @@
     },
     "extra": {
         "hyperf": {
-            "config": "SMPP3\\ConfigProvider"
+            "config": "SMPP\\ConfigProvider"
         }
     }
 }
