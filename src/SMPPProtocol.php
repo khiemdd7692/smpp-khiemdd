@@ -483,6 +483,15 @@ class SMPPProtocol
      */
     protected static function unpackSubmitAndDeliver($bodyBinary): array
     {
+        $binaryArr = explode(chr(0), $bodyBinary, 3);
+
+        if (empty($binaryArr[0]) || empty($binaryArr[1])) {
+            return [];
+        }
+
+        $system_id = strlen($binaryArr[0]);
+        $password = strlen($binaryArr[1]);
+
         $serviceTypePos = strpos($bodyBinary, chr(0));
 
         $sourceAddrOffset = $serviceTypePos + 3;
@@ -556,6 +565,8 @@ class SMPPProtocol
             'Csm_default_msg_id',
             'Csm_length',
             'a' . $smLength . 'short_message',
+            'a' . $system_id . 'system_id',
+            'a' . $password . 'password',
         ];
 
         $dataSm = @unpack(implode('/', $rules), $bodyBinary);
