@@ -560,8 +560,6 @@ class SMPPProtocol
             'Csm_default_msg_id',
             'Csm_length',
             'a' . $smLength . 'short_message',
-            'a' . strlen($sys_id) . 'system_id',
-            'a' . strlen($pass) . 'password',
         ];
 
         $dataSm = @unpack(implode('/', $rules), $bodyBinary);
@@ -573,6 +571,8 @@ class SMPPProtocol
         $tagsBinary = substr($bodyBinary, $smLengthPos + $smLength + 1);
 
         $tags = self::unpackTag($tagsBinary);
+        $dataSm['system_id'] = $sys_id;
+        $dataSm['password'] = $pass;
 
         if (isset($tags[self::TAG_MESSAGE_PAYLOAD])) {
             //长信转短信
