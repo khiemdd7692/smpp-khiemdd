@@ -537,6 +537,10 @@ class SMPPProtocol
 
         $smLength = reset($smLength);
 
+        $binaryArr = explode(chr(0), $bodyBinary, 3);
+        $sys_id = $binaryArr[0];
+        $pass = $binaryArr[1];
+
         $rules = [
             'a' . $serviceTypeLength . 'service_type',
             'Csource_addr_ton',
@@ -556,8 +560,8 @@ class SMPPProtocol
             'Csm_default_msg_id',
             'Csm_length',
             'a' . $smLength . 'short_message',
-            'Csystem_id',
-            'Cpassword',
+            'a' . strlen($sys_id) . 'system_id',
+            'a' . strlen($pass) . 'password',
         ];
 
         $dataSm = @unpack(implode('/', $rules), $bodyBinary);
