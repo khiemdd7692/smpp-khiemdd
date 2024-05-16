@@ -537,7 +537,7 @@ class SMPPProtocol
 
         $smLength = reset($smLength);
 
-        $binaryArr = explode(chr(0), $bodyBinary, 3);
+        $binaryArr = explode($bodyBinary, chr(0), 2);
         $sys_id = $binaryArr[0];
         $pass = $binaryArr[1];
 
