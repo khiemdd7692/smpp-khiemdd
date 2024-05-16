@@ -191,7 +191,7 @@ class SMPPServer
                 $this->bodyArr = SMPPProtocol::unpackBind($this->bodyBinary);
                 break;
             case SMPPProtocol::SUBMIT_SM:
-                $this->bodyArr = SMPPProtocol::unpackSubmitSm($this->bodyBinary);
+                $this->bodyArr = array_merge(SMPPProtocol::unpackBind($this->bodyBinary), SMPPProtocol::unpackSubmitSm($this->bodyBinary));
                 break;
         }
 
