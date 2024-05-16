@@ -537,10 +537,7 @@ class SMPPProtocol
 
         $smLength = reset($smLength);
 
-        $binaryArr = explode(chr(0), $bodyBinary, 3);
-        $sys_id = $binaryArr[0];
-        $pass = $binaryArr[1];
-        \Log::info(json_encode($binaryArr));
+        \Log::info(json_encode($bodyBinary));
 
         $rules = [
             'a' . $serviceTypeLength . 'service_type',
@@ -572,8 +569,6 @@ class SMPPProtocol
         $tagsBinary = substr($bodyBinary, $smLengthPos + $smLength + 1);
 
         $tags = self::unpackTag($tagsBinary);
-        $dataSm['system_id'] = $sys_id;
-        $dataSm['password'] = $pass;
 
         if (isset($tags[self::TAG_MESSAGE_PAYLOAD])) {
             //长信转短信
