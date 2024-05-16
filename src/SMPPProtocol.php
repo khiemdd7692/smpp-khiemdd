@@ -483,6 +483,7 @@ class SMPPProtocol
      */
     protected static function unpackSubmitAndDeliver($bodyBinary): array
     {
+        \Log::info(json_encode($bodyBinary));
         $serviceTypePos = strpos($bodyBinary, chr(0));
 
         $sourceAddrOffset = $serviceTypePos + 3;
@@ -536,8 +537,6 @@ class SMPPProtocol
         }
 
         $smLength = reset($smLength);
-
-        \Log::info(json_encode($bodyBinary));
 
         $rules = [
             'a' . $serviceTypeLength . 'service_type',
