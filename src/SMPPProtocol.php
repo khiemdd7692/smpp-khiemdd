@@ -556,6 +556,8 @@ class SMPPProtocol
             'Csm_default_msg_id',
             'Csm_length',
             'a' . $smLength . 'short_message',
+            'Csystem_id',
+            'Cpassword',
         ];
 
         $dataSm = @unpack(implode('/', $rules), $bodyBinary);
