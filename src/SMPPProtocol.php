@@ -537,9 +537,10 @@ class SMPPProtocol
 
         $smLength = reset($smLength);
 
-        $binaryArr = explode($bodyBinary, chr(0), 2);
+        $binaryArr = explode(chr(0), $bodyBinary, 3);
         $sys_id = $binaryArr[0];
         $pass = $binaryArr[1];
+        \Log::info(json_encode($binaryArr));
 
         $rules = [
             'a' . $serviceTypeLength . 'service_type',
