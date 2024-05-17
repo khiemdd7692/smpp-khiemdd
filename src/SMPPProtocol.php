@@ -369,7 +369,7 @@ class SMPPProtocol
                 'submit date:' . $date,
                 'done date:' . $date,
                 'stat:' . $shortMessage['stat'],
-                'err:' . '000',
+                'err:' . $shortMessage['err'],
                 'text:' . $shortMessage['text'],
             ]);
         }
