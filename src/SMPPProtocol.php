@@ -374,7 +374,7 @@ class SMPPProtocol
             ]);
         }
 
-        return self::packSubmitAndDeliver($sourceAddr, $destinationAddr, $shortMessage, $esmClass, self::DELIVER_SM, self::generateProSequenceId(), self::DATA_CODING_UCS2);
+        return self::packSubmitAndDeliver($sourceAddr, $destinationAddr, $shortMessage, $esmClass, self::DELIVER_SM, self::generateProSequenceId(), self::DATA_CODING_DEFAULT);
     }
 
     /**
